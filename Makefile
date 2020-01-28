@@ -51,12 +51,15 @@ obj-y += source/args.o
 obj-y += source/macros.o
 obj-y += source/paging.o
 obj-y += source/profile.o
+obj-y += source/slatprofile.o
 obj-y += source/shuffle.o
 obj-y += source/solver.o
 
 anc-obj-y += source/anc.o
 
 revanc-obj-y += source/revanc.o
+
+slatleak-obj-y += source/slatleak.o
 
 -include source/$(ARCH)/Makefile
 -include source/$(PLAT)/Makefile
@@ -68,6 +71,7 @@ CFLAGS += -I$(BUILD)/include
 obj = $(addprefix $(BUILD)/, $(obj-y))
 anc-obj = $(addprefix $(BUILD)/, $(anc-obj-y))
 revanc-obj = $(addprefix $(BUILD)/, $(revanc-obj-y))
+slatleak-obj = $(addprefix $(BUILD)/, $(slatleak-obj-y))
 
 # Include the dependencies.
 dep = $(obj:.o=.d)
@@ -78,7 +82,7 @@ dep = $(obj:.o=.d)
 
 .PRECIOUS: $(BUILD)/var/%
 
-all: $(BUILD)/anc $(BUILD)/revanc
+all: $(BUILD)/anc $(BUILD)/revanc $(BUILD)/slatleak
 
 # Rule to link the program.
 $(BUILD)/anc: $(obj) $(anc-obj) $(BUILD)/var/LDFLAGS $(BUILD)/var/LIBS
@@ -90,6 +94,11 @@ $(BUILD)/revanc: $(obj) $(revanc-obj) $(BUILD)/var/LDFLAGS $(BUILD)/var/LIBS
 	@echo "LD $@"
 	@mkdir -p $(dir $@)
 	@$(CC) $(obj) $(revanc-obj) -o $@ $(LDFLAGS) $(LIBS)
+
+$(BUILD)/slatleak: $(obj) $(slatleak-obj) $(BUILD)/var/LDFLAGS $(BUILD)/var/LIBS
+	@echo "LD $@"
+	@mkdir -p $(dir $@)
+	@$(CC) $(obj) $(slatleak-obj) -o $@ $(LDFLAGS) $(LIBS)
 
 # Rule used to detect changed variables.
 $(BUILD)/var/%: force
